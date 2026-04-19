@@ -1,0 +1,93 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isValidId(id) { 
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); 
+    }
+    function isSignedIn() { 
+      return request.auth != null; 
+    }
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+    // For this app, we allow any signed in user to manage data for simplicity in this demo,
+    // but in a real app, we'd check roles.
+    function isManager() {
+      return isSignedIn();
+    }
+
+    // 1. Employees
+    match /employees/{employeeId} {
+      allow read: if true;
+      allow create: if isManager() && isValidId(employeeId);
+      allow update: if isManager() && (
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'phone', 'email', 'address', 'password', 'status', 'departmentId', 'jobTitleId', 'salary', 'allowances', 'deductions', 'assignedShifts', 'role', 'permissions'])
+      );
+      allow delete: if isManager();
+    }
+
+    // 2. Departments
+    match /departments/{departmentId} {
+      allow read: if true;
+      allow write: if isManager() && isValidId(departmentId);
+    }
+
+    // 3. Job Titles
+    match /jobTitles/{jobTitleId} {
+      allow read: if true;
+      allow write: if isManager() && isValidId(jobTitleId);
+    }
+
+    // 4. Shifts
+    match /shifts/{shiftId} {
+      allow read: if true;
+      allow write: if isManager() && isValidId(shiftId);
+    }
+
+    // 5. Attendance
+    match /attendance/{attendanceId} {
+      allow read: if true;
+      allow create: if true;
+      allow update: if true;
+      allow delete: if isManager();
+    }
+
+    // 6. Leave Requests
+    match /leaveRequests/{requestId} {
+      allow read: if true;
+      allow create: if true;
+      allow update: if true;
+      allow delete: if isManager();
+    }
+
+    // 7. Payslips
+    match /payslips/{payslipId} {
+      allow read: if true;
+      allow write: if isManager() && isValidId(payslipId);
+    }
+
+    // 8. Department Settings
+    match /departmentSettings/{settingId} {
+      allow read: if true;
+      allow write: if isManager() && isValidId(settingId);
+    }
+
+    // 9. Sales Bonus Configs
+    match /salesBonusConfigs/{configId} {
+      allow read: if isManager();
+      allow write: if isManager() && isValidId(configId);
+    }
+
+    // 10. Company Settings
+    match /companySettings/{settingId} {
+      allow read: if true;
+      allow write: if isManager() && isValidId(settingId);
+    }
+  }
+}

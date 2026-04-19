@@ -1,0 +1,125 @@
+{
+  "entities": {
+    "Employee": {
+      "title": "Employee",
+      "description": "Information about an employee",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string" },
+        "address": { "type": "string" },
+        "status": { "type": "string", "enum": ["active", "inactive"] },
+        "startDate": { "type": "string", "format": "date-time" },
+        "departmentId": { "type": "string" },
+        "jobTitleId": { "type": "string" },
+        "assignedShifts": { "type": "array" },
+        "salary": { "type": "object" },
+        "allowances": { "type": "array" },
+        "deductions": { "type": "array" }
+      },
+      "required": ["id", "name", "phone", "email", "startDate", "departmentId", "jobTitleId"]
+    },
+    "Department": {
+      "title": "Department",
+      "description": "Organizational unit",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "kpiBonus": { "type": "number" }
+      },
+      "required": ["id", "name", "kpiBonus"]
+    },
+    "JobTitle": {
+      "title": "JobTitle",
+      "description": "Job position",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "responsibilityBonus": { "type": "number" }
+      },
+      "required": ["id", "name", "responsibilityBonus"]
+    },
+    "Shift": {
+      "title": "Shift",
+      "description": "Working shift definition",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "startTime": { "type": "string" },
+        "endTime": { "type": "string" }
+      },
+      "required": ["id", "name", "startTime", "endTime"]
+    },
+    "Attendance": {
+      "title": "Attendance",
+      "description": "Daily attendance record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "employeeId": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "shiftId": { "type": "string" },
+        "clockIn": { "type": "string" },
+        "clockOut": { "type": "string" },
+        "status": { "type": "string" },
+        "isOvertime": { "type": "boolean" }
+      },
+      "required": ["employeeId", "date", "shiftId", "status"]
+    },
+    "LeaveRequest": {
+      "title": "LeaveRequest",
+      "description": "Employee leave request",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "employeeId": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "shiftIds": { "type": "array" },
+        "status": { "type": "string", "enum": ["pending", "approved", "rejected"] },
+        "notes": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["employeeId", "date", "shiftIds", "status"]
+    },
+    "Payslip": {
+      "title": "Payslip",
+      "description": "Monthly pay record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "employeeId": { "type": "string" },
+        "periodId": { "type": "string" },
+        "totalSalary": { "type": "number" }
+      },
+      "required": ["employeeId", "periodId", "totalSalary"]
+    },
+    "DepartmentSettings": {
+      "title": "DepartmentSettings",
+      "description": "Monthly settings for department KPIs",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "month": { "type": "string" },
+        "departmentId": { "type": "string" },
+        "revenue": { "type": "number" },
+        "kpiBonus": { "type": "number" }
+      },
+      "required": ["month", "departmentId", "revenue", "kpiBonus"]
+    }
+  },
+  "firestore": {
+    "/employees/{employeeId}": { "schema": "Employee", "description": "Employee records" },
+    "/departments/{departmentId}": { "schema": "Department", "description": "Departments" },
+    "/jobTitles/{jobTitleId}": { "schema": "JobTitle", "description": "Job titles" },
+    "/shifts/{shiftId}": { "schema": "Shift", "description": "Working shifts" },
+    "/attendance/{attendanceId}": { "schema": "Attendance", "description": "Attendance logs" },
+    "/leaveRequests/{requestId}": { "schema": "LeaveRequest", "description": "Leave requests" },
+    "/payslips/{payslipId}": { "schema": "Payslip", "description": "Payslips" },
+    "/departmentSettings/{settingId}": { "schema": "DepartmentSettings", "description": "Monthly dept settings" }
+  }
+}

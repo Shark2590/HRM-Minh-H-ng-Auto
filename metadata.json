@@ -1,0 +1,6 @@
+{
+  "name": "HRM AI - Hệ thống Quản trị Nhân sự",
+  "description": "Giải pháp quản lý nhân sự thông minh tích hợp chấm công, tính lương và quản lý nghỉ phép.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": []
+}
